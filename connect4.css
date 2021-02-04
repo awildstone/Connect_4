@@ -1,0 +1,112 @@
+body {
+	background-color: steelblue;
+	background-image: url('subtle-grey.png');
+	font-family: 'Special Elite', cursive;
+	color: honeydew;
+}
+
+h1 {
+	text-align: center;
+	font-family: 'Pacifico', cursive;
+	font-size: 3em;
+	color: honeydew;
+	text-shadow: 2px 2px 2px black;
+}
+
+#game {
+	width: 400px;
+	margin: auto;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#board td {
+	/* Position the td relative so we can position the pieces absolutely for animation sequence */
+	position: relative;
+	width: 50px;
+	height: 50px;
+	border: solid 1px honeydew;
+	background-color: honeydew;
+	border-radius: 3px;
+}
+
+/* pieces are div within game table cells: draw as colored circles */
+.piece {
+	animation: top-to-bottom 250ms ease-in forwards; /* animate piece falling top to bottom*/
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	width: 40px;
+	height: 40px;
+	border: 1px solid black;
+	box-shadow: 2px 2px 4px #333333;
+	border-radius: 50%;
+}
+
+@keyframes top-to-bottom {
+	/* Position the piece -330px at start and end and 5px position from top at end */
+	0% {
+		top: -330px;
+	}
+	100% {
+		top: 5px;
+	}
+}
+
+.piece.p1 {
+	background-color: #b44683;
+}
+
+.piece.p2 {
+	background-color: #4682b4;
+}
+
+/* column-top is table row of clickable areas for each column */
+#column-top td {
+	border: 1px solid honeydew;
+	border-radius: 50%;
+	box-shadow: 2px 2px 2px #333333;
+	background-color: #31697e;
+}
+
+#column-top td:hover {
+	cursor: pointer;
+	background-color: #b4a446;
+	/* background-color: steelblue; */
+}
+
+#menu {
+	display: flex;
+	justify-content: space-between;
+	background-color: #31697e;
+	padding: 5px;
+	width: 390px;
+	margin: auto;
+	font-size: 1.25em;
+	box-shadow: 2px 2px 2px #333333;
+	border-radius: 3px;
+}
+
+button {
+	font-family: 'Special Elite', cursive;
+	font-size: 2em;
+	color: honeydew;
+	display: block;
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 5px 5px 0px 5px;
+	background-color: #31697e;
+	box-shadow: 2px 2px 2px #333333;
+	border: 1px solid honeydew;
+	border-radius: 5px;
+}
+
+button:hover {
+	cursor: pointer;
+	background-color: steelblue;
+	color: white;
+}
