@@ -85,13 +85,16 @@ describe('Connect 4 Tests', function() {
         expect(gameInPlay).toEqual(false);
     });
 
-    it('should check for a player win combination and end the game if current player has won on checkForWin()', function() {
+    it('should check board for win and return true if current player has won on checkForWin()', function() {
         board[5][0] = currPlayer;
         board[5][1] = currPlayer;
         board[5][2] = currPlayer;
         board[5][3] = currPlayer;
-        checkForWin();
-        expect(gameInPlay).toEqual(false);
+        expect(checkForWin()).toEqual(true);
+    });
+
+    it('should check the board for win and return undefined if there is no win on checkForWin()', function() {
+        expect(checkForWin()).toEqual(undefined);
     });
 
     afterEach(function() {
