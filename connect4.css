@@ -107,6 +107,6 @@ button {
 
 button:hover {
 	cursor: pointer;
-	background-color: steelblue;
+	background-color: #b4a446;
 	color: white;
 }
