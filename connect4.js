@@ -85,6 +85,19 @@ function placeInTable(y, x) {
   td.append(piece);
 }
 
+/* updateScore checks which player just won, and updates that player's score. When there is a draw no players get points. */
+function updateScore(){
+  // select each player score div
+  const player1 = document.getElementById('score1');
+  const player2 = document.getElementById('score2');
+
+  if (currPlayer === 1) {
+    player1.innerText = `Player 1 Score: ${score1 = score1 + 1}`;
+  } else {
+    player2.innerText = `Player 2 Score: ${score2 = score2 + 1}`;
+  }
+}
+
 /** endGame: announce game end */
 function endGame(msg) {
   // alert users the game is over and if there is a winner or draw. Delay so piece can fall before alert runs.
@@ -111,19 +124,6 @@ function gameOver() {
   div.append(button);
 }
 
-/* updateScore checks which player just won, and updates that player's score. When there is a draw no players get points. */
-function updateScore(){
-  // select each player score div
-  const player1 = document.getElementById('score1');
-  const player2 = document.getElementById('score2');
-
-  if (currPlayer === 1) {
-    player1.innerText = `Player 1 Score: ${score1 = score1 + 1}`;
-  } else {
-    player2.innerText = `Player 2 Score: ${score2 = score2 + 1}`;
-  }
-}
-
 /* Handler for gameOver button click event. PlayAgain resets the game values and builds a new memory and html board*/
 function playAgain(e) {
   gameInPlay = true; //set gameplay true
@@ -145,11 +145,11 @@ function playAgain(e) {
 
 /** handleClick: handle click of column top to play piece */
 function handleClick(evt) {
-  // if the game is over, prevent playing
-  if (gameInPlay === false) return;
-
   // get x coordinate from id of target event
   const x = +evt.target.id;
+
+  // if the game is over, prevent playing
+  if (gameInPlay === false) return;
 
   // get y coordinate (if null, ignore click)
   const y = findSpotForCol(x);
@@ -166,13 +166,18 @@ function handleClick(evt) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
-  // check for draw. if all cells in memory board are filled notify draw and end game
-  if (board.every(arr => arr.every(val => val !== null))) {
-    return endGame('Player 1 & Player 2 draw!');
-  }
+  // check for draw
+  checkForDraw();
 
   // switch currPlayer 1 <-> 2
   currPlayer === 1 ? currPlayer = 2 : currPlayer = 1;
+}
+
+/* Check for draw. If all cells in memory board are filled notify players of draw and end the game */
+function checkForDraw() {
+  if (board.every(arr => arr.every(val => val !== null))) {
+    return endGame('Player 1 & Player 2 draw!');
+  }
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -195,9 +200,7 @@ function checkForWin() {
   // to check if there is a win, we iterate over the entire board to check if there is any win combination for horizonal, vertical, down-right diagonal, or down-left diagonal. 
   // I improved the speed of this progam by about 100ms by iterating from the bottom right of the board to the top left because our board pieces are played from the bottom up we will find the win faster with less iterations if we iterate from the bottom up.
   for (let y = HEIGHT - 1; y >= 0; y--) { //iterate over each row in table
-    console.log(`CURRENT Y COORD: ${y}`);
     for (let x = WIDTH - 1; x >= 0; x--) { //iterate over each td in row
-      console.log(`\tCURRENT X COORD: ${x}`);
       // on current y & x coordinate, select 3 squares to the right of this current coordinate
       let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
       // on current y & x coordinate, select 3 squares below this current coordinate
