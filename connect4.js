@@ -31,9 +31,9 @@ function makeBoard() {
 function makeHtmlBoard() {
   const htmlBoard = document.getElementById('board');
 
- // Create the top row of our board which will act as the game controller for the players. Top row contains a column-top id and a click event listener.
+ // Create the top row of our board which will act as the game controller for the players. Top row contains a control-row id and a click event listener.
   const top = document.createElement("tr");
-  top.setAttribute("id", "column-top");
+  top.setAttribute("id", "control-row");
   top.addEventListener("click", handleClick);
 
   // Add our top(controller) row. Each cell has a unique id indicating the column order. Create each td and add to our html game board.
@@ -67,9 +67,14 @@ function findSpotForCol(x) {
       return i - 1;
     }
   }
-  // if all cells are played, change the control cell bg color
-  xCol[0].style.background = '#333333';
+  // if all cells are played, change the control cell bg color  
+  allPlayed(xCol);
   return null;
+}
+
+/* Changes the color of the player control for the provided control row if all cells have been played */
+function allPlayed(row) {
+  row[0].style.background = '#333333';
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
@@ -145,7 +150,7 @@ function playAgain(e) {
 
 /** handleClick: handle click of column top to play piece */
 function handleClick(evt) {
-  // get x coordinate from id of target event
+  // get x coordinate from id of target event. + is parsing to int
   const x = +evt.target.id;
 
   // if the game is over, prevent playing

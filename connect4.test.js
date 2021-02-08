@@ -4,14 +4,14 @@ describe('Connect 4 Tests', function() {
         makeHtmlBoard();
     });
 
-    it('should build a new gameboard in memory on makeBoard()', function() {
+    it('should build a new gameboard in memory on makeBoard', function() {
         expect(board.length).not.toEqual(0);
         expect(board[0][0]).toEqual(null);
     });
 
     it ('should create rows and add them to a table on makeHtmlBoard()', function() {
         const rows = document.querySelectorAll('table tr');
-        expect(rows[0].id).toEqual('column-top');
+        expect(rows[0].id).toEqual('control-row');
         expect(rows.length).toEqual(7);
     });
 

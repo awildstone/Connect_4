@@ -64,15 +64,15 @@ table {
 	background-color: #4682b4;
 }
 
-/* column-top is table row of clickable areas for each column */
-#column-top td {
+/* control-row is table row of clickable areas for each column */
+#control-row td {
 	border: 1px solid honeydew;
 	border-radius: 50%;
 	box-shadow: 2px 2px 2px #333333;
 	background-color: #31697e;
 }
 
-#column-top td:hover {
+#control-row td:hover {
 	cursor: pointer;
 	background-color: #b4a446;
 }
