@@ -202,21 +202,20 @@ function checkForWin() {
     );
   }
 
-  // to check if there is a win, we iterate over the entire board to check if there is any win combination for horizonal, vertical, down-right diagonal, or down-left diagonal. 
-  // I improved the speed of this progam by about 100ms by iterating from the bottom right of the board to the top left because our board pieces are played from the bottom up we will find the win faster with less iterations if we iterate from the bottom up.
+  // to check if there is a win, we iterate over the entire board to check if there is any win combination for horizonal, vertical, down-right diagonal, or down-left diagonal.
   for (let y = HEIGHT - 1; y >= 0; y--) { //iterate over each row in table
     for (let x = WIDTH - 1; x >= 0; x--) { //iterate over each td in row
-      // on current y & x coordinate, select 3 squares to the right of this current coordinate
-      let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
-      // on current y & x coordinate, select 3 squares below this current coordinate
-      let vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
-      // on current y & x coordinate, select 3 squares diagonally-right below this current coordinate
-      let diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
-      // on current y & x coordinate, select 3 squares diagonally-left below this current coordinate
-      let diagDL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]];
+      // on current y & x coordinate, select 3 squares to the left of this current coordinate
+      let horiz = [[y, x], [y, x - 1], [y, x - 2], [y, x - 3]];
+      // on current y & x coordinate, select 3 squares above this current coordinate
+      let vert = [[y, x], [y - 1, x], [y - 2, x], [y - 3, x]];
+      // on current y & x coordinate, select 3 squares diagonally-right above this current coordinate
+      let diagUR = [[y, x], [y - 1, x + 1], [y - 2, x + 2], [y - 3, x + 3]];
+      // on current y & x coordinate, select 3 squares diagonally-left above this current coordinate
+      let diagUL = [[y, x], [y - 1, x - 1], [y - 2, x - 2], [y - 3, x - 3]];
 
       // pass each group of coordindates to _win to confirm if they meet win criteria
-      if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
+      if (_win(horiz) || _win(vert) || _win(diagUR) || _win(diagUL)) {
         return true;
       }
     }
