@@ -32,17 +32,17 @@ function makeHtmlBoard() {
   const htmlBoard = document.getElementById('board');
 
  // Create the top row of our board which will act as the game controller for the players. Top row contains a control-row id and a click event listener.
-  const top = document.createElement("tr");
-  top.setAttribute("id", "control-row");
-  top.addEventListener("click", handleClick);
+  const controlRow = document.createElement("tr");
+  controlRow.setAttribute("id", "control-row");
+  controlRow.addEventListener("click", handleClick);
 
   // Add our top(controller) row. Each cell has a unique id indicating the column order. Create each td and add to our html game board.
   for (let x = 0; x < WIDTH; x++) {
-    const headCell = document.createElement("td");
-    headCell.setAttribute("id", x);
-    top.append(headCell);
+    const controlCell = document.createElement("td");
+    controlCell.setAttribute("id", x);
+    controlRow.append(controlCell);
   }
-  htmlBoard.append(top);
+  htmlBoard.append(controlRow);
 
   // Build each column and row for our html game board. Y represents the height of each column, and X represents the width of rows. Each table row with the specified row width is added to the htmlBoard.
   for (let y = 0; y < HEIGHT; y++) {
@@ -58,23 +58,21 @@ function makeHtmlBoard() {
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 function findSpotForCol(x) {
-  // select all td elements in column x using queryselector. Add 1 to select valid nth-child.
-  const xCol = document.querySelectorAll(`tr td:nth-child(${x + 1})`);
-
-  // starting at the end of the list (bottom of column), find the first available td without a child div element and return the index - 1 for valid coordinate number (first row is reserved for control). Otherwise return null if all tds contain chid div.
-  for (let i = xCol.length - 1; i >= 1; i--) {
-    if (xCol[i].firstChild === null) {
-      return i - 1;
+  // Starting at the bottom of our memory board, find the first coordinate that returns null (falsey).
+  for (let y = HEIGHT - 1; y >= 0; y--) {
+    if(!board[y][x]) {
+      return y;
     }
   }
   // if all cells are played, change the control cell bg color  
-  allPlayed(xCol);
-  return null;
+    allPlayed(x);
+    return null;
 }
 
 /* Changes the color of the player control for the provided control row if all cells have been played */
-function allPlayed(row) {
-  row[0].style.background = '#333333';
+function allPlayed(x) {
+  const xCol = document.getElementById(`${x}`);
+  xCol.style.background = '#333333';
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
@@ -85,9 +83,9 @@ function placeInTable(y, x) {
   // set a class for piece and for the current player
   piece.setAttribute('class', `piece p${currPlayer}`);
 
-  // select the target td by id using the y & x coordinates
-  const td = document.getElementById(`${y}-${x}`);
-  td.append(piece);
+  // select the target spot in the DOM by id using the y & x coordinates
+  const spot = document.getElementById(`${y}-${x}`);
+  spot.append(piece);
 }
 
 /* updateScore checks which player just won, and updates that player's score. When there is a draw no players get points. */
@@ -117,11 +115,11 @@ function endGame(msg) {
   }
 
   //offer players option to play again
-  gameOver();
+  makePlayAgainButton();
 }
 
-/* gameOver creates a button to allow players the option to play again once game is over */
-function gameOver() {
+/* makePlayAgainButton creates a button to allow players the option to play again once game is over */
+function makePlayAgainButton() {
   const div = document.querySelector('#button');
   let button = document.createElement('button');
   button.innerText = 'Play Again?';
@@ -129,7 +127,7 @@ function gameOver() {
   div.append(button);
 }
 
-/* Handler for gameOver button click event. PlayAgain resets the game values and builds a new memory and html board*/
+/* Handler for makePlayAgainButton button click event. PlayAgain resets the game values and builds a new memory and html board*/
 function playAgain(e) {
   gameInPlay = true; //set gameplay true
   currPlayer = 1; //start new game with player 1
@@ -160,14 +158,14 @@ function handleClick(evt) {
   const y = findSpotForCol(x);
   if (y === null) return;
 
+   // update in-memory board
+   board[y][x] = currPlayer;
+
   // place piece in board and add to HTML table
   placeInTable(y, x);
 
- // update in-memory board
-  board[y][x] = currPlayer;
-
   // check for win, if winner end game
-  if (checkForWin()) {
+  if (checkForWin(y, x)) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
@@ -180,45 +178,36 @@ function handleClick(evt) {
 
 /* Check for draw. If all cells in memory board are filled notify players of draw and end the game */
 function checkForDraw() {
-  if (board.every(arr => arr.every(val => val !== null))) {
+  if (board.every(arr => arr.every(val => val))) {
     return endGame('Player 1 & Player 2 draw!');
   }
 }
 
-/** checkForWin: check board cell-by-cell for "does a win start here?" */
-function checkForWin() {
+/** checkForWin: accepts the coordindates of the current play and checks for win*/
+function checkForWin(y, x) {
+  // Check four cells to see if they are within valid range and played by the current player.
   function _win(cells) {
-    // Check four cells to see if they're all color of current player
-    //  - cells: list of four (y, x) cells
-    //  - returns true if all are legal coordinates & all match currPlayer
-
     return cells.every(
       ([y, x]) =>
-        y >= 0 && //confirm y coord is within the valid height range 0-6
+        y >= 0 && //confirm y coord is within the valid height range 0-5
         y < HEIGHT &&
-        x >= 0 && //confirm x coord is within the valid width range 0-5
+        x >= 0 && //confirm x coord is within the valid width range 0-6
         x < WIDTH &&
         board[y][x] === currPlayer //check if current coordinate was played by current player
     );
   }
+  //checks every possible direction from the current play to see if there is a win
+  let horizLeft = [[y, x], [y, x - 1], [y, x - 2], [y, x - 3]];
+  let horizRight = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
+  let vertUp = [[y, x], [y - 1, x], [y - 2, x], [y - 3, x]];
+  let vertDown = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
+  let diagUR = [[y, x], [y - 1, x + 1], [y - 2, x + 2], [y - 3, x + 3]];
+  let diagLR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
+  let diagUL = [[y, x], [y - 1, x - 1], [y - 2, x - 2], [y - 3, x - 3]];
+  let diagLL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]];
 
-  // to check if there is a win, we iterate over the entire board to check if there is any win combination for horizonal, vertical, down-right diagonal, or down-left diagonal.
-  for (let y = HEIGHT - 1; y >= 0; y--) { //iterate over each row in table
-    for (let x = WIDTH - 1; x >= 0; x--) { //iterate over each td in row
-      // on current y & x coordinate, select 3 squares to the left of this current coordinate
-      let horiz = [[y, x], [y, x - 1], [y, x - 2], [y, x - 3]];
-      // on current y & x coordinate, select 3 squares above this current coordinate
-      let vert = [[y, x], [y - 1, x], [y - 2, x], [y - 3, x]];
-      // on current y & x coordinate, select 3 squares diagonally-right above this current coordinate
-      let diagUR = [[y, x], [y - 1, x + 1], [y - 2, x + 2], [y - 3, x + 3]];
-      // on current y & x coordinate, select 3 squares diagonally-left above this current coordinate
-      let diagUL = [[y, x], [y - 1, x - 1], [y - 2, x - 2], [y - 3, x - 3]];
-
-      // pass each group of coordindates to _win to confirm if they meet win criteria
-      if (_win(horiz) || _win(vert) || _win(diagUR) || _win(diagUL)) {
-        return true;
-      }
-    }
+  if (_win(horizLeft) || _win(horizRight) || _win(vertUp) || _win(vertDown) || _win(diagUR) || _win(diagLR) || _win(diagUL) || _win(diagLL)) {
+    return true;
   }
 }
 

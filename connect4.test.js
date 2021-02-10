@@ -68,8 +68,8 @@ describe('Connect 4 Tests', function() {
         button.remove();
     });
 
-    it('should create and add a button to allow players to play again on gameOver()', function() {
-        gameOver();
+    it('should create and add a button to allow players to play again on makePlayAgainButton()', function() {
+        makePlayAgainButton();
         const button = document.querySelector('button');
         expect(button).not.toEqual(undefined);
         expect(button.innerText).toEqual('Play Again?');
@@ -90,11 +90,11 @@ describe('Connect 4 Tests', function() {
         board[5][1] = currPlayer;
         board[5][2] = currPlayer;
         board[5][3] = currPlayer;
-        expect(checkForWin()).toEqual(true);
+        expect(checkForWin(5, 3)).toEqual(true);
     });
 
     it('should check the board for win and return undefined if there is no win on checkForWin()', function() {
-        expect(checkForWin()).toEqual(undefined);
+        expect(checkForWin(5, 3)).toEqual(undefined);
     });
 
     afterEach(function() {
